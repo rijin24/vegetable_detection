@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Store Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <h2>Store Login</h2>
+
+        {% if error %}
+        <div class="alert error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('store.store_login') }}" class="login-form">
+            <label for="store_name">Store Name:</label>
+            <input type="text" id="store_name" name="store_name" required autocomplete="off" />
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+    </div>
+</body>
+</html>

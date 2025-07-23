@@ -1,0 +1,23 @@
+# Ignore virtual environments
+tf-gpu-env/
+tfenv/
+venv/
+env/
+.venv
+
+tf-gpu-env
+tfenv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore system files (optional)
+.DS_Store
+Thumbs.db
+# ML model files
+*.tflite
+*.h5
+
+# Ignore dataset folders/files
+test/
