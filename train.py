@@ -44,7 +44,7 @@ val_data = val_datagen.flow_from_directory(
 base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(img_size, img_size, 3))
 base_model.trainable = True  # Unfreeze for fine-tuning
 
-# Optionally, freeze first few layers if you want
+
 for layer in base_model.layers[:100]:
     layer.trainable = False
 
@@ -87,4 +87,4 @@ tflite_model = converter.convert()
 with open('vegetable_model.tflite', 'wb') as f:
     f.write(tflite_model)
 
-print("✅ Model trained, saved, and converted to TFLite.")
+print(" Model trained, saved, and converted to TFLite.")

@@ -5,11 +5,11 @@ import sys
 import os
 
 # -----------------------------
-# ✅ Settings
+#  Settings
 MODEL_PATH = 'vegetable_model_mobilenetv2.h5'
 IMG_SIZE = 224
 
-# Replace these with your actual class names in correct order
+
 class_names = [
     'Bean', 'Bitter_Gourd' , 'Botle_Gourd' , 'Brinjal', 'Broccoli', 'Cabbage', 'Capsicum',
     'Carrot', 'Cauliflower', 'Cucumber', 'Papaya', 'Potato',
@@ -26,23 +26,23 @@ def load_and_prepare_image(img_path):
 def main(img_path):
     # Check model exists
     if not os.path.exists(MODEL_PATH):
-        print(f"❌ Model file not found: {MODEL_PATH}")
+        print(f" Model file not found: {MODEL_PATH}")
         sys.exit(1)
 
-    print("✅ Loading model...")
+    print("Loading model...")
     model = tf.keras.models.load_model(MODEL_PATH)
 
-    print(f"✅ Preparing image: {img_path}")
+    print(f"Preparing image: {img_path}")
     img_array = load_and_prepare_image(img_path)
 
-    print("✅ Predicting...")
+    print("Predicting...")
     predictions = model.predict(img_array)
     predicted_index = np.argmax(predictions[0])
     confidence = predictions[0][predicted_index]
 
     predicted_class = class_names[predicted_index]
 
-    print(f"\n✅ Prediction complete!")
+    print(f"\nPrediction complete!")
     print(f"Predicted class index: {predicted_index}")
     print(f"Predicted class name : {predicted_class}")
     print(f"Confidence           : {confidence:.4f}")
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     test_image_path = sys.argv[1]
     if not os.path.exists(test_image_path):
-        print(f"❌ Image file not found: {test_image_path}")
+        print(f" Image file not found: {test_image_path}")
         sys.exit(1)
 
     main(test_image_path)

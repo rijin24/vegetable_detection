@@ -90,6 +90,36 @@ def add_vegetable():
         store=store,
         success=success_message
     )
+@store_bp.route('/api/vegetable_availability', methods=['GET'])
+def vegetable_availability():
+    veg_name = request.args.get('name', '').strip().lower()
+    if not veg_name:
+        return {'error': 'Missing vegetable name'}, 400
+
+    # Join Vegetable and Store tables to get availability
+    results = db.session.query(
+        Store.name.label('store_name'),
+        Store.postcode,
+        Vegetable.stock
+    ).join(Vegetable, Store.id == Vegetable.store_id
+    ).filter(
+        Vegetable.name == veg_name,
+        Vegetable.stock > 0
+    ).all()
+
+    if not results:
+        return {'message': f'{veg_name.capitalize()} not available in any store'}, 200
+
+    available_stores = [
+        {
+            'store_name': store_name,
+            'postcode': postcode,
+            'stock': stock
+        }
+        for store_name, postcode, stock in results
+    ]
+
+    return {'vegetable': veg_name, 'available_stores': available_stores}, 200
 
 @store_bp.route('/logout')
 def logout():

@@ -3,10 +3,10 @@ import numpy as np
 import os
 from tensorflow.keras.preprocessing import image
 
-# Load your trained model
+
 model = tf.keras.models.load_model('vegetable_recognition_model.keras')
 
-# Define the classes (folder names)
+
 class_names = ['Bean', 'Broccoli', 'Carrot', 'Cauliflower', 'Bitter_Gourd',
                'Bottle_Gourd', 'Brinjal', 'Cabbage', 'Capsicum', 'Cucumber',
                'Papaya', 'Potato', 'Pumpkin', 'Radish', 'Tomato']
