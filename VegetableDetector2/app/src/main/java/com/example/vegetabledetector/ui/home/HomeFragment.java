@@ -28,6 +28,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.example.vegetabledetector.Constants;
 import com.example.vegetabledetector.PredictionApi;
 import com.example.vegetabledetector.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -55,8 +56,8 @@ public class HomeFragment extends Fragment {
 
     private ImageView imageView;
     private Uri photoUri;
-
-    private final String BASE_URL = "http://172.20.10.3:5000/"; // update with your server IP
+    String recipesUrl = Constants.BASE_URL;
+    private final String BASE_URL = recipesUrl;
 
     private ActivityResultLauncher<String> permissionLauncher;
     private ActivityResultLauncher<Intent> cameraLauncher;

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.vegetabledetector.Constants;
 import com.example.vegetabledetector.R;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +27,7 @@ public class RecipesFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecipeAdapter adapter;
     private TextView tvVegetableName;
+    String recipesUrl = Constants.BASE_URL;
 
     public static RecipesFragment newInstance(String vegetableName) {
         RecipesFragment fragment = new RecipesFragment();
@@ -54,7 +56,7 @@ public class RecipesFragment extends Fragment {
     }
 
     private void fetchRecipesFromAPI(String vegetableName) {
-        String url = "http://172.20.10.3:5000/get_recipes?vegetable=" + vegetableName;
+        String url = recipesUrl+"get_recipes?vegetable=" + vegetableName;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {

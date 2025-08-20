@@ -17,6 +17,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.vegetabledetector.Constants;
 import com.example.vegetabledetector.R;
 
 import org.json.JSONArray;
@@ -28,6 +29,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private ImageView recipeImage;
     private LinearLayout ingredientsContainer;
     private String imageUrl, recipeUrl, recipeName;
+    String recipesUrl = Constants.BASE_URL ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         ingredientsContainer = findViewById(R.id.ingredientsContainer);
 
         Intent intent = getIntent();
-        recipeName = intent.getStringExtra("name");;/.l
+        recipeName = intent.getStringExtra("name");;
         String description = intent.getStringExtra("description");
         imageUrl = intent.getStringExtra("imageUrl");
         recipeUrl = intent.getStringExtra("recipeUrl");
@@ -67,7 +69,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void fetchIngredientsFromApi(String recipeName) {
-        String url = "http://172.20.10.3:5000/get_ingredients?recipe_name=" + Uri.encode(recipeName);
+        String url = recipesUrl+"get_ingredients?recipe_name=" + Uri.encode(recipeName);
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -101,7 +103,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void checkAvailability(String ingredient) {
-        String url = "http://172.20.10.3:5000/api/vegetable_availability?name=" + Uri.encode(ingredient);
+        String url = recipesUrl+"vegetable_availability?name=" + Uri.encode(ingredient);
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
