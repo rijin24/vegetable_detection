@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/chip_background"
+    android:paddingHorizontal="12dp"
+    android:layout_marginEnd="8dp"
+    android:elevation="2dp">
+
+    <!-- Ingredient image/icon -->
+    <ImageView
+        android:id="@+id/imgIngredient"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_vegetable"
+        android:contentDescription="Ingredient Icon"
+        android:layout_marginEnd="6dp" />
+
+    <!-- Ingredient name -->
+    <TextView
+        android:id="@+id/tvIngredientName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tomato"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-medium" />
+</LinearLayout>
