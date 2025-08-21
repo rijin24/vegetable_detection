@@ -7,84 +7,98 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 import os
 
-# Set paths
-train_dir = 'test/vegetabledataset/train'
-val_dir = 'test/vegetabledataset/validation'
-img_size = 224
-batch_size = 32
-num_classes = 15
+# Dataset directories
+train_path = 'test/vegetabledataset/train'
+valid_path = 'test/vegetabledataset/validation'
+image_dim = 224
+batch_sz = 32
+class_count = 15
 
-# Step 1: Data Preprocessing with Augmentation
-train_datagen = ImageDataGenerator(
-    rescale=1./255,
-    rotation_range=25,
-    zoom_range=0.25,
-    width_shift_range=0.1,
-    height_shift_range=0.1,
+# ===============================
+# 1. Data Augmentation & Generators
+# ===============================
+train_gen = ImageDataGenerator(
+    rescale=1.0/255,
+    rotation_range=30,
+    zoom_range=0.2,
+    width_shift_range=0.15,
+    height_shift_range=0.15,
     horizontal_flip=True
 )
 
-val_datagen = ImageDataGenerator(rescale=1./255)
+valid_gen = ImageDataGenerator(rescale=1.0/255)
 
-train_data = train_datagen.flow_from_directory(
-    train_dir,
-    target_size=(img_size, img_size),
-    batch_size=batch_size,
+train_loader = train_gen.flow_from_directory(
+    train_path,
+    target_size=(image_dim, image_dim),
+    batch_size=batch_sz,
     class_mode='categorical'
 )
 
-val_data = val_datagen.flow_from_directory(
-    val_dir,
-    target_size=(img_size, img_size),
-    batch_size=batch_size,
+valid_loader = valid_gen.flow_from_directory(
+    valid_path,
+    target_size=(image_dim, image_dim),
+    batch_size=batch_sz,
     class_mode='categorical'
 )
 
-# Step 2: Load MobileNetV2
-base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(img_size, img_size, 3))
-base_model.trainable = True  # Unfreeze for fine-tuning
+# ===============================
+# 2. Load Pre-trained MobileNetV2
+# ===============================
+mobilenet_base = MobileNetV2(weights='imagenet', include_top=False, input_shape=(image_dim, image_dim, 3))
+mobilenet_base.trainable = True  # enable fine-tuning
 
+# Freeze the first set of layers
+for lyr in mobilenet_base.layers[:100]:
+    lyr.trainable = False
 
-for layer in base_model.layers[:100]:
-    layer.trainable = False
+# ===============================
+# 3. Add Classification Layers
+# ===============================
+net = mobilenet_base.output
+net = GlobalAveragePooling2D()(net)
+net = Dense(256, activation='relu')(net)
+net = Dropout(0.3)(net)
+net = Dense(128, activation='relu')(net)
+net = Dropout(0.3)(net)
+final_output = Dense(class_count, activation='softmax')(net)
 
-# Step 3: Add custom layers
-x = base_model.output
-x = GlobalAveragePooling2D()(x)
-x = Dense(256, activation='relu')(x)
-x = Dropout(0.3)(x)
-x = Dense(128, activation='relu')(x)
-x = Dropout(0.3)(x)
-output = Dense(num_classes, activation='softmax')(x)
+veg_model = Model(inputs=mobilenet_base.input, outputs=final_output)
 
-model = Model(inputs=base_model.input, outputs=output)
-
-# Step 4: Compile model
-model.compile(
+# ===============================
+# 4. Compile Model
+# ===============================
+veg_model.compile(
     optimizer=Adam(learning_rate=1e-4),
     loss='categorical_crossentropy',
     metrics=['accuracy']
 )
 
-# Learning rate adjustment
-lr_callback = ReduceLROnPlateau(monitor='val_accuracy', patience=3, factor=0.5, verbose=1)
+# Learning rate schedule callback
+lr_scheduler = ReduceLROnPlateau(monitor='val_accuracy', patience=3, factor=0.5, verbose=1)
 
-# Step 5: Train the model
-model.fit(
-    train_data,
-    validation_data=val_data,
+# ===============================
+# 5. Train Model
+# ===============================
+veg_model.fit(
+    train_loader,
+    validation_data=valid_loader,
     epochs=20,
-    callbacks=[lr_callback]
+    callbacks=[lr_scheduler]
 )
 
-# Step 6: Save model
-model.save('vegetable_model_mobilenetv2.h5')
+# ===============================
+# 6. Save Model
+# ===============================
+veg_model.save('vegetable_model_mobilenetv2.h5')
 
-# Step 7: Convert to TFLite
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
-tflite_model = converter.convert()
+# ===============================
+# 7. Convert to TensorFlow Lite
+# ===============================
+tflite_converter = tf.lite.TFLiteConverter.from_keras_model(veg_model)
+tflite_model = tflite_converter.convert()
 
-with open('vegetable_model.tflite', 'wb') as f:
-    f.write(tflite_model)
+with open('vegetable_model.tflite', 'wb') as file:
+    file.write(tflite_model)
 
-print(" Model trained, saved, and converted to TFLite.")
+print("Training complete. Model saved and converted to TFLite.")
